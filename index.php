@@ -122,36 +122,60 @@ $app->post('/users', function (Request $request, Response $response, array $args
             ->withStatus(200);
 });
 
-$app->post('/mensajes', function (Request $request, Response $response, array $args) {
-    
-    //parametros para guardar foto
-    $archivo = './files/mensajes.json.';
-    $responde = new Lresponse();
-    $mensaje = $request->getParsedBody()['mensaje'] ?? '';
-    $destino = $request->getParsedBody()['id_usuario'] ?? '';
-    
-    if($mensaje != '' && $destino != '')
-    {
-        $nuevoMensaje = new mensaje($mensaje, $destino);
-        $responde = $nuevoMensaje->guardarMensaje($archivo);
-        if($responde->status == 'unsucces')
-        {
-            $responde->data = 'error al guardar mensaje';
+
+
+$app->group('/mensajes', function($group){
+    $group->post('[/]', function (Request $request, Response $response, array $args) {
+        $key = "example_key";
+        //parametros para guardar foto
+        $archivo = './files/mensajes.json.';
+        $responde = new Lresponse();
+        $mensaje = $request->getParsedBody()['mensaje'] ?? '';
+        $destino = $request->getParsedBody()['id_usuario'] ?? '';
+        //obtengo token
+        $headers = getallheaders();
+        //verifico token
+        $token = $headers['token'] ?? '';
+        if ($token == '') {
+            // $response = new Lresponse();
+            $responde->status = 'unsucces';
+            $responde->data = 'error , token incorrecto';
+            $verifica = false;
         }
         else{
-            $responde->data = 'guardado exitoso';
+            try {
+                //code...
+                $decoded = JWT::decode($token, $key, array('HS256'));
+                $verifica = true;
+                // print_r($decoded);
+            } catch (\Throwable $th) {
+                //throw $th;
+                $verifica = false;
+                $responde->data = $th;
+            }
         }
-    }
-    else{
-        $responde->data = 'Datos con errores'; 
-    }
-    $response->getBody()->write(json_encode($responde));
-        return $response
-            ->withHeader('Content-Type' , 'aplication/json')
-            ->withStatus(200);
-});
+        if($mensaje != '' && $destino != '' && $verifica == true)
+        {
+            $nuevoMensaje = new mensaje($mensaje, $destino);
+            $responde = $nuevoMensaje->guardarMensaje($archivo);
+            if($responde->status == 'unsucces')
+            {
+                $responde->data = 'error al guardar mensaje';
+            }
+            else{
+                $responde->data = 'guardado exitoso';
+            }
+        }
+        else{
+            $responde->data = 'Datos con errores'; 
+        }
+        $response->getBody()->write(json_encode($responde));
+            return $response
+                ->withHeader('Content-Type' , 'aplication/json')
+                ->withStatus(200);
+    });
 
-   
+});
 // $app->group('/stock', function($group){
 //     $group->post('[/]', function (Request $request, Response $response, array $args) {
 //         $archivo = './files/producto.json';
