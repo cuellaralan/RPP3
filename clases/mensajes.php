@@ -6,6 +6,7 @@ class mensaje
     public $destinoId;
     public $mensaje;
     public $emisorId;
+    public $fecha;
 
     public function __construct($mensaje,$destino, $emisor)
     {
@@ -13,6 +14,10 @@ class mensaje
         $this->mensaje = $mensaje;
         $this->destinoId = $destino;
         $this->emisorId = $emisor;
+        setlocale(LC_TIME,"es_RA");
+        $fecha = date("Y-m-d");
+        // $hora = date("H-i-s");
+        $this->fecha = $fecha; 
     }
 
     public function guardarMensaje($archivo)
@@ -29,6 +34,31 @@ class mensaje
             $responde->data = $this;
             $responde->status = $retorno;
         return $responde;
+    }
+
+    public static function buscarMEnsajes($archivo, $tipo, $emisor)
+    {
+        // echo "estoy en usuario";
+        $mensajes = funciones::Leer($archivo);
+        /*array_search ( mixed $needle , array $haystack [, bool $strict = false ] ) : mixed
+        Busca en el haystack (pajar) por la needle (aguja).*/
+        $responde = new Lresponse();
+        $fechaultima = 0;
+        $seleccion = array();
+        foreach ($mensajes as $key => $value) {
+            // var_dump($value); echo "$key";
+            if($tipo == 'admin')
+            {
+                array_push($seleccion, $value->emisorId . '=>' . $value->destinoId . '=>' . $value->fecha);
+            }
+            else {
+                if($emisor == $value->emisorId)
+                {
+                    array_push($seleccion, $value);
+                }
+            }
+        }
+        return $seleccion;
     }
 
 }
