@@ -85,11 +85,10 @@ $app->post('/users', function (Request $request, Response $response, array $args
     //files
     $fotos = $_FILES['foto'] ?? '';
 
-
     if($email != '' && $clave != '' && $tipo != '' && $fotos != '' && ($tipo == 'admin' || 'user'))
     {
         //parametros para guardar foto
-        $destino = './imagenes/';
+        $destino = './images/users/';
         $fotoName = $fotos['name'][0];
         $path = $fotos['tmp_name'][0];
         //
