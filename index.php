@@ -8,7 +8,7 @@ require_once __DIR__ .'./vendor/autoload.php';
 // require './clases/paises.php';
 require_once './clases/funciones.php';
 require_once './clases/usuarios.php';
-require_once './clases/productos.php';
+require_once './clases/mensajes.php';
 require_once './clases/response.php';
 require_once './clases/ventas.php';
 
@@ -122,25 +122,34 @@ $app->post('/users', function (Request $request, Response $response, array $args
             ->withStatus(200);
 });
 
-// $app->post('/agua', function (Request $request, Response $response, array $args) {
+$app->post('/mensajes', function (Request $request, Response $response, array $args) {
     
-//     $foto = $_FILES['foto'] ?? '';
-//     //parametros para guardar foto
-//     $fotoName = $foto['name'];
-//     $path = $foto['tmp_name'];
-//     $destino = './imagenes/';
+    //parametros para guardar foto
+    $archivo = './files/mensajes.json.';
+    $responde = new Lresponse();
+    $mensaje = $request->getParsedBody()['mensaje'] ?? '';
+    $destino = $request->getParsedBody()['id_usuario'] ?? '';
     
-//     //marca de agua
-//     $estampa = './estampa.png';
-//     $WaterMark = 'estampa.png';
-//     funciones::addImageWatermark ($path, $WaterMark, $path, 50);
-//     $destiny = funciones::GuardaTemp($path, $destino, $fotoName, 'marca' . 'agua'); 
-    
-//     $response->getBody()->write(json_encode($destiny));
-//         return $response
-//             ->withHeader('Content-Type' , 'aplication/json')
-//             ->withStatus(200);
-// });
+    if($mensaje != '' && $destino != '')
+    {
+        $nuevoMensaje = new mensaje($mensaje, $destino);
+        $responde = $nuevoMensaje->guardarMensaje($archivo);
+        if($responde->status == 'unsucces')
+        {
+            $responde->data = 'error al guardar mensaje';
+        }
+        else{
+            $responde->data = 'guardado exitoso';
+        }
+    }
+    else{
+        $responde->data = 'Datos con errores'; 
+    }
+    $response->getBody()->write(json_encode($responde));
+        return $response
+            ->withHeader('Content-Type' , 'aplication/json')
+            ->withStatus(200);
+});
 
    
 // $app->group('/stock', function($group){
