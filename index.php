@@ -19,8 +19,8 @@ $app->setBasePath("/RPP3");
 $app->addErrorMiddleware(false, true, true);
 $key = "example_key";
 
-$response = new Lresponse();
-$response->status = 'success';
+// $response = new Lresponse();
+// $response->status = 'success';
 
 //obtengo headers
 $headers = getallheaders();
@@ -28,16 +28,16 @@ $headers = getallheaders();
 $token = $headers['token'] ?? '';
 
 $app->post('/login', function (Request $request, Response $response, array $args) {
-    $archivo = './files/usuarios.json';
+    $archivo = './files/users.json';
     $key = "example_key";
     $responde = new Lresponse();
     $responde->status = 'success';
-    $nombre = $request->getParsedBody()['nombre'];
-    $clave = $request->getParsedBody()['clave'];
+    $email = $request->getParsedBody()['email'] ?? '';
+    $clave = $request->getParsedBody()['clave'] ?? '';
     
-        if($nombre != '' && $clave != '')
+        if($email != '' && $clave != '')
         {
-            $responde = usuario::verificarLogin($archivo,$nombre,$clave);
+            $responde = usuario::verificarLogin($archivo,$email,$clave);
             $datos= $responde->data;
             // print_r(json_encode($response));
             if($responde->status == 'unsucces')
@@ -51,8 +51,7 @@ $app->post('/login', function (Request $request, Response $response, array $args
                     "aud" => "http://example.com",
                     "iat" => 1356999524,
                     "nbf" => 1357000000,
-                    "name" => $datos->nombre,
-                    "dni" => $datos->dni,
+                    "name" => $datos->email,
                     "id" => $datos->id,
                     "tipo" => $datos->tipo
                 );
@@ -64,7 +63,7 @@ $app->post('/login', function (Request $request, Response $response, array $args
         
         else
         {
-            $responde->data = "Error - Datos vacíos para realizar INSERT/UPDATE";
+            $responde->data = "Error - Datos vacíos ";
         }
         $response->getBody()->write(json_encode($responde));
         return $response

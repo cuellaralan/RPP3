@@ -2,6 +2,7 @@
     "name": "tamy/rpp3",
     "require": {
         "slim/slim": "4.*",
-        "slim/psr7": "^1.1"
+        "slim/psr7": "^1.1",
+        "firebase/php-jwt": "^5.2"
     }
 }

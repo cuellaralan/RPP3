@@ -29,29 +29,29 @@ class usuario
         // print_r($listaPersonas);       
         // escribo archivo
         $retorno = funciones::Guardar($listaPersonas,$archivo,'w');
-        $response = new Lresponse();
-            $response->data = $this;
-            $response->status = $retorno;
-        return $response;
+        $responde = new Lresponse();
+            $responde->data = $this;
+            $responde->status = $retorno;
+        return $responde;
     }
 
-    public static function verificarLogin($archivo,$name,$pass)
+    public static function verificarLogin($archivo,$mail,$pass)
     {
         // echo "estoy en usuario";
         $listaUsuarios = funciones::Leer($archivo);
         /*array_search ( mixed $needle , array $haystack [, bool $strict = false ] ) : mixed
         Busca en el haystack (pajar) por la needle (aguja).*/
-        $response = new Lresponse();
+        $responde = new Lresponse();
         foreach ($listaUsuarios as $key => $value) {
             // var_dump($value); echo "$key";
-            if($value->nombre == $name && $value->clave== $pass)
+            if($value->email == $mail && $value->clave== $pass)
             {
-                $response->data = $value;
-                $response->status = 'succes';
+                $responde->data = $value;
+                $responde->status = 'succes';
                 break;
             }
         }
-        return $response;
+        return $responde;
     }
 
     public static function verificarUser($archivo,$name,$lastname)

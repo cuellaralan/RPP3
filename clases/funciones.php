@@ -23,29 +23,33 @@ class Funciones
 
     public static function Leer($archivo)
     {
-        if (file_exists($archivo)) {
-            //abro archivo y asigno manejador
-            $handle = fopen($archivo,'r');
-            $size = filesize($archivo);
-            // Leo archivo y recupero array
-            // Convierto string a array
-            if($size == 0)
-            {
+        try {
+            if (file_exists($archivo)) {
+                //abro archivo y asigno manejador
+                $handle = fopen($archivo,'r');
+                $size = filesize($archivo);
+                // Leo archivo y recupero array
+                // Convierto string a array
+                if($size == 0)
+                {
+                    $listaPersonas = array();
+                }
+                else
+                {
+                    $listaPersonas = fgets($handle, $size);
+                    $listaPersonas = json_decode($listaPersonas);
+                }
+                //cierro archivo  
+                $result = fclose($handle);
+            }
+            else {
                 $listaPersonas = array();
             }
-            else
-            {
-                $listaPersonas = fgets($handle, $size);
-                $listaPersonas = json_decode($listaPersonas);
-            }
-            //cierro archivo  
-            $result = fclose($handle);
+            // print_r($listaPersonas);
+            return $listaPersonas;
+        } catch (\Throwable $th) {
+            return 'error al leer archivo';
         }
-        else {
-            $listaPersonas = array();
-        }
-        // print_r($listaPersonas);
-        return $listaPersonas;
     }
 
     public static function Guardar($objeto,$archivo,$modo)
@@ -111,17 +115,17 @@ class Funciones
 
     public static function BuscaEnArrayxID($archivo,$id)
     {
-        $response = new Lresponse();
+        $responde = new Lresponse();
         $listaProd = funciones::Leer($archivo);
         // print_r(json_encode($listaProd));
         foreach ($listaProd as $key => $value) {
             if ($value->id = $id) {
-                $response->status = 'succes';
-                $response->data = $value;
+                $responde->status = 'succes';
+                $responde->data = $value;
                 break;
             }
         }
-        return $response;
+        return $responde;
     }
 
     // Función para agregar marca de agua de imagen sobre imágenes
