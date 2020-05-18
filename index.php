@@ -86,7 +86,7 @@ $app->post('/users', function (Request $request, Response $response, array $args
     $fotos = $_FILES['foto'] ?? '';
 
 
-    if($email != '' && $clave != '' && $tipo != '' && $fotos != '')
+    if($email != '' && $clave != '' && $tipo != '' && $fotos != '' && ($tipo == 'admin' || 'user'))
     {
         //parametros para guardar foto
         $destino = './imagenes/';
@@ -116,7 +116,7 @@ $app->post('/users', function (Request $request, Response $response, array $args
     }
     else
     {
-        $responde->data = "Error - Datos vacíos ";
+        $responde->data = "Error - Datos vacíos o incorrectos";
     }
     $response->getBody()->write(json_encode($responde));
         return $response
