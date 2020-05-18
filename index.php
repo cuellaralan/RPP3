@@ -156,7 +156,7 @@ $app->group('/mensajes', function($group){
         }
         if($mensaje != '' && $destino != '' && $verifica == true)
         {
-            $nuevoMensaje = new mensaje($mensaje, $destino);
+            $nuevoMensaje = new mensaje($mensaje, $destino, $decoded->id);
             $responde = $nuevoMensaje->guardarMensaje($archivo);
             if($responde->status == 'unsucces')
             {

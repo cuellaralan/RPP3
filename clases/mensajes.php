@@ -5,12 +5,14 @@ class mensaje
     public $id;
     public $destinoId;
     public $mensaje;
+    public $emisorId;
 
-    public function __construct($mensaje,$destino)
+    public function __construct($mensaje,$destino, $emisor)
     {
         $this->id = time();
         $this->mensaje = $mensaje;
         $this->destinoId = $destino;
+        $this->emisorId = $emisor;
     }
 
     public function guardarMensaje($archivo)
