@@ -121,9 +121,54 @@ $app->post('/users', function (Request $request, Response $response, array $args
             ->withHeader('Content-Type' , 'aplication/json')
             ->withStatus(200);
 });
-
-
-
+        
+        
+        
+$app->get('/mensajes/{id}', function (Request $request, Response $response, array $args) {
+    $key = "example_key";
+    //parametros para guardar foto
+    $archivo = './files/mensajes.json.';
+    $responde = new Lresponse();
+    $id = $request->getQueryParams()['id'];
+    // $destino = $request->getParsedBody()['id_usuario'] ?? '';
+    //obtengo token
+    $headers = getallheaders();
+    //verifico token
+    $token = $headers['token'] ?? '';
+    if ($token == '') {
+        // $response = new Lresponse();
+        $responde->status = 'unsucces';
+        $responde->data = 'error , token incorrecto';
+        $verifica = false;
+    }
+    else{
+        try {
+            //code...
+            $decoded = JWT::decode($token, $key, array('HS256'));
+            $verifica = true;
+            // print_r($decoded);
+        } catch (\Throwable $th) {
+            //throw $th;
+            $verifica = false;
+            $responde->data = $th;
+        }
+    }
+    if($verifica == true && $id != '')
+    {
+        $tipo = $decoded->tipo;
+        // $emisor = $decoded->id;
+        $respuesta = mensaje::buscarMEnsajesId($archivo, $tipo, $id);
+        $responde->data = $respuesta;
+        $responde->status = 'succes';
+    }
+    else{
+        $responde->data = 'Datos con errores'; 
+    }
+    $response->getBody()->write(json_encode($responde));
+        return $response
+            ->withHeader('Content-Type' , 'aplication/json')
+            ->withStatus(200);
+});
 $app->group('/mensajes', function($group){
     $group->post('[/]', function (Request $request, Response $response, array $args) {
         $key = "example_key";
@@ -175,7 +220,7 @@ $app->group('/mensajes', function($group){
                 ->withStatus(200);
     });
 
-    $group->get('[/]', function (Request $request, Response $response, array $args) {
+    $group->get('', function (Request $request, Response $response, array $args) {
         $key = "example_key";
         //parametros para guardar foto
         $archivo = './files/mensajes.json.';
@@ -213,7 +258,7 @@ $app->group('/mensajes', function($group){
             $responde->status = 'succes';
         }
         else{
-            $responde->data = 'Datos con errores'; 
+            $responde->data = 'Datos con errores - '; 
         }
         $response->getBody()->write(json_encode($responde));
             return $response
@@ -221,11 +266,12 @@ $app->group('/mensajes', function($group){
                 ->withStatus(200);
     });
 
+    
 });
 // $app->group('/stock', function($group){
-//     $group->post('[/]', function (Request $request, Response $response, array $args) {
-//         $archivo = './files/producto.json';
-//         $verifica = true;
+    //     $group->post('[/]', function (Request $request, Response $response, array $args) {
+        //         $archivo = './files/producto.json';
+        //         $verifica = true;
 //         $key = "example_key";
 //         $responde = new Lresponse();
 //         //obtengo body
@@ -245,7 +291,7 @@ $app->group('/mensajes', function($group){
 //         }
 //         else{
 //             try {
-//                 //code...
+    //                 //code...
 //                 $decoded = JWT::decode($token, $key, array('HS256'));
 //                 if ($decoded->tipo != 'admin') {
 //                     $verifica = false;
@@ -267,14 +313,14 @@ $app->group('/mensajes', function($group){
 //             $destiny = funciones::GuardaTemp($path, $destino, $fotoName, $producto . $marca); 
 //             if($destino != $destiny)
 //             {
-//                 $producto = new producto($producto, $marca, $precio, $stock, $destiny);
-//                 $responde = $producto->guardarProducto($archivo);
-//                 // echo $response;
-//             }
-//             else
-//             {
-//                 // $response = new Lresponse();
-//                 $responde->status = 'unsucces';
+    //                 $producto = new producto($producto, $marca, $precio, $stock, $destiny);
+    //                 $responde = $producto->guardarProducto($archivo);
+    //                 // echo $response;
+    //             }
+    //             else
+    //             {
+        //                 // $response = new Lresponse();
+        //                 $responde->status = 'unsucces';
 //                 $responde->data = 'error al subir imagen de producto';
 //                 // echo $response;
 //             }

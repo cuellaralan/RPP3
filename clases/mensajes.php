@@ -60,6 +60,35 @@ class mensaje
         }
         return $seleccion;
     }
+    public static function buscarMEnsajesId($archivo, $tipo, $id)
+    {
+        // echo "estoy en usuario";
+        $mensajes = funciones::Leer($archivo);
+        /*array_search ( mixed $needle , array $haystack [, bool $strict = false ] ) : mixed
+        Busca en el haystack (pajar) por la needle (aguja).*/
+        $responde = new Lresponse();
+        // $fechaultima = 0;
+        $seleccion = array();
+        $entro = false;
+        foreach ($mensajes as $key => $value) {
+            // var_dump($value); echo "$key";
+            if($tipo == 'admin')
+            {
+                if($id == $value->emisorId)
+                {
+                    array_push($seleccion, $value);
+                }
+                // $entro = $value;
+            }
+            else {
+                if($id == $value->emisorId || $id == $value->destinoId)
+                {
+                    array_push($seleccion, $value);
+                }
+            }
+        }
+        return $seleccion;
+    }
 
 }
 
